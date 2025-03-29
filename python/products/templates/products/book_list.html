@@ -1,0 +1,374 @@
+{% extends 'products/base.html' %}
+
+{% block title %}Danh sách sách{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h2>Danh sách sách</h2>
+        <button onclick="showAddBookForm()" class="btn btn-primary">Thêm sách mới</button>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
+    </div>
+    <div class="col-md-4">
+        <select id="categorySelect" class="form-select">
+            <option value="">Tất cả danh mục</option>
+        </select>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table id="bookTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Tác giả</th>
+                <th>Danh mục</th>
+                <th>Giá</th>
+                <th>Tồn kho</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<div id="pagination" class="d-flex justify-content-center mt-3">
+</div>
+
+<!-- Modal Form -->
+<div class="modal fade" id="bookModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Thêm sách mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookForm">
+                    <input type="hidden" id="bookId">
+                    <div class="mb-3">
+                        <label class="form-label">Tên sách</label>
+                        <input type="text" class="form-control" id="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="author" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-select" id="category" required>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ISBN</label>
+                        <input type="text" class="form-control" id="isbn" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Giá</label>
+                        <input type="number" class="form-control" id="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tồn kho</label>
+                        <input type="number" class="form-control" id="stock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="saveBook()">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Khởi tạo biến
+let currentPage = 1;
+let totalPages = 1;
+let bookModal;
+
+// Hàm khởi tạo
+document.addEventListener('DOMContentLoaded', function() {
+    bookModal = new bootstrap.Modal(document.getElementById('bookModal'));
+    loadCategories();
+    loadBooks();
+    
+    // Xử lý tìm kiếm
+    document.getElementById('searchInput').addEventListener('input', debounce(function(e) {
+        currentPage = 1;
+        loadBooks();
+    }, 300));
+    
+    // Xử lý lọc theo danh mục
+    document.getElementById('categorySelect').addEventListener('change', function() {
+        currentPage = 1;
+        loadBooks();
+    });
+});
+
+// Hàm load danh mục
+async function loadCategories() {
+    try {
+        const response = await fetch('/products/api/categories/');
+        const data = await response.json();
+        
+        const categorySelect = document.getElementById('categorySelect');
+        const categoryForm = document.getElementById('category');
+        
+        data.forEach(category => {
+            categorySelect.add(new Option(category.name, category.id));
+            categoryForm.add(new Option(category.name, category.id));
+        });
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        showMessage('Lỗi khi tải danh mục', 'error');
+    }
+}
+
+// Hàm load danh sách sách
+async function loadBooks() {
+    try {
+        const searchQuery = document.getElementById('searchInput').value;
+        const categoryId = document.getElementById('categorySelect').value;
+        
+        const response = await fetch(`/products/api/books/?page=${currentPage}&search=${searchQuery}&category=${categoryId}`);
+        const data = await response.json();
+        
+        displayBooks(data.results);
+        displayPagination(data.count);
+    } catch (error) {
+        console.error('Error loading books:', error);
+        showMessage('Lỗi khi tải danh sách sách', 'error');
+    }
+}
+
+// Hàm hiển thị danh sách sách
+function displayBooks(books) {
+    const tbody = document.querySelector('#bookTable tbody');
+    tbody.innerHTML = '';
+    
+    books.forEach(book => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${book.isbn}</td>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.category_name}</td>
+            <td>${book.price.toLocaleString()}đ</td>
+            <td>${book.stock}</td>
+            <td>
+                <button onclick="editBook(${book.id})" class="btn btn-sm btn-warning">Sửa</button>
+                <button onclick="deleteBook(${book.id})" class="btn btn-sm btn-danger">Xóa</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Hàm hiển thị phân trang
+function displayPagination(totalItems) {
+    const itemsPerPage = 10;
+    totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+    
+    // Nút Previous
+    if (currentPage > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.className = 'btn btn-outline-primary me-2';
+        prevButton.textContent = 'Trước';
+        prevButton.onclick = () => {
+            currentPage--;
+            loadBooks();
+        };
+        pagination.appendChild(prevButton);
+    }
+    
+    // Các nút số trang
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.className = `btn btn-outline-primary me-2 ${i === currentPage ? 'active' : ''}`;
+        pageButton.textContent = i;
+        pageButton.onclick = () => {
+            currentPage = i;
+            loadBooks();
+        };
+        pagination.appendChild(pageButton);
+    }
+    
+    // Nút Next
+    if (currentPage < totalPages) {
+        const nextButton = document.createElement('button');
+        nextButton.className = 'btn btn-outline-primary';
+        nextButton.textContent = 'Sau';
+        nextButton.onclick = () => {
+            currentPage++;
+            loadBooks();
+        };
+        pagination.appendChild(nextButton);
+    }
+}
+
+// Hàm hiển thị form thêm/sửa
+function showAddBookForm() {
+    document.getElementById('modalTitle').textContent = 'Thêm sách mới';
+    document.getElementById('bookForm').reset();
+    document.getElementById('bookId').value = '';
+    bookModal.show();
+}
+
+// Hàm sửa sách
+async function editBook(id) {
+    try {
+        const response = await fetch(`/products/api/books/${id}/`);
+        const book = await response.json();
+        
+        document.getElementById('modalTitle').textContent = 'Sửa sách';
+        document.getElementById('bookId').value = book.id;
+        document.getElementById('title').value = book.title;
+        document.getElementById('author').value = book.author;
+        document.getElementById('category').value = book.category;
+        document.getElementById('isbn').value = book.isbn;
+        document.getElementById('price').value = book.price;
+        document.getElementById('stock').value = book.stock;
+        document.getElementById('description').value = book.description;
+        
+        bookModal.show();
+    } catch (error) {
+        console.error('Error loading book:', error);
+        showMessage('Lỗi khi tải thông tin sách', 'error');
+    }
+}
+
+// Hàm lưu sách
+async function saveBook() {
+    const form = document.getElementById('bookForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const bookId = document.getElementById('bookId').value;
+    const data = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        category: document.getElementById('category').value,
+        isbn: document.getElementById('isbn').value,
+        price: document.getElementById('price').value,
+        stock: document.getElementById('stock').value,
+        description: document.getElementById('description').value
+    };
+    
+    try {
+        const url = bookId ? `/products/api/books/${bookId}/` : '/products/api/books/';
+        const method = bookId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            bookModal.hide();
+            loadBooks();
+            showMessage(bookId ? 'Cập nhật sách thành công!' : 'Thêm sách thành công!', 'success');
+        } else {
+            throw new Error('Lỗi khi lưu sách');
+        }
+    } catch (error) {
+        console.error('Error saving book:', error);
+        showMessage('Lỗi khi lưu sách', 'error');
+    }
+}
+
+// Hàm xóa sách
+async function deleteBook(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa sách này?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/products/api/books/${id}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        if (response.ok) {
+            loadBooks();
+            showMessage('Xóa sách thành công!', 'success');
+        } else {
+            throw new Error('Lỗi khi xóa sách');
+        }
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        showMessage('Lỗi khi xóa sách', 'error');
+    }
+}
+
+// Hàm hiển thị thông báo
+function showMessage(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+// Hàm lấy CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Hàm debounce
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+</script>
+{% endblock %} 

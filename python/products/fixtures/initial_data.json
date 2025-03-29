@@ -1,0 +1,74 @@
+[
+    {
+        "model": "products.category",
+        "pk": 1,
+        "fields": {
+            "name": "Sách Văn Học",
+            "slug": "sach-van-hoc",
+            "description": "Các tác phẩm văn học Việt Nam và thế giới"
+        }
+    },
+    {
+        "model": "products.category",
+        "pk": 2,
+        "fields": {
+            "name": "Sách Kinh Tế",
+            "slug": "sach-kinh-te",
+            "description": "Sách về kinh doanh, quản lý và tài chính"
+        }
+    },
+    {
+        "model": "products.category",
+        "pk": 3,
+        "fields": {
+            "name": "Sách Thiếu Nhi",
+            "slug": "sach-thieu-nhi",
+            "description": "Sách truyện tranh và truyện cổ tích cho thiếu nhi"
+        }
+    },
+    {
+        "model": "products.book",
+        "pk": 1,
+        "fields": {
+            "title": "Truyện Kiều",
+            "author": "Nguyễn Du",
+            "category": 1,
+            "isbn": "9786040000001",
+            "price": "150000.00",
+            "description": "Tác phẩm văn học kinh điển của Việt Nam",
+            "stock": 50,
+            "created_at": "2024-03-27T09:00:00Z",
+            "updated_at": "2024-03-27T09:00:00Z"
+        }
+    },
+    {
+        "model": "products.book",
+        "pk": 2,
+        "fields": {
+            "title": "Đắc Nhân Tâm",
+            "author": "Dale Carnegie",
+            "category": 2,
+            "isbn": "9786040000002",
+            "price": "120000.00",
+            "description": "Nghệ thuật đối nhân xử thế",
+            "stock": 30,
+            "created_at": "2024-03-27T09:00:00Z",
+            "updated_at": "2024-03-27T09:00:00Z"
+        }
+    },
+    {
+        "model": "products.book",
+        "pk": 3,
+        "fields": {
+            "title": "Dế Mèn Phiêu Lưu Ký",
+            "author": "Tô Hoài",
+            "category": 3,
+            "isbn": "9786040000003",
+            "price": "80000.00",
+            "description": "Truyện thiếu nhi nổi tiếng",
+            "stock": 100,
+            "created_at": "2024-03-27T09:00:00Z",
+            "updated_at": "2024-03-27T09:00:00Z"
+        }
+    }
+] 
