@@ -1,4 +1,7 @@
+from datetime import timedelta
+from django.utils import timezone
 import os
+import random
 import django
 from django.db import connection
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'boms.settings')
@@ -270,6 +273,88 @@ def populate_sample_data():
         print(f'Đã tạo thành công {len(book_objects)} sách mẫu')
     else:
         print('Không có sách mới để tạo')
+
+    # Thêm Order và OrderDetail
+    users = list(User.objects.all())  # Lấy danh sách người dùng
+    books = list(Book.objects.all())  # Lấy danh sách sách
+
+    # Tạo 15 đơn hàng
+    orders = []
+
+    # 5 đơn hàng trong 7 ngày gần nhất (Completed)
+    for i in range(5):
+        created_at = timezone.now() - timedelta(days=i)
+        order = Order(
+            user=users[0],  # Gắn với customer1
+            total_amount=0,  # Sẽ cập nhật sau
+            status='Completed',
+            created_at=created_at,
+            updated_at=created_at
+        )
+        orders.append(order)
+
+    # 5 đơn hàng trong 12 tháng gần nhất (Completed)
+    for i in range(5):
+        created_at = timezone.now() - timedelta(days=30 * (i + 1))
+        order = Order(
+            user=users[0],
+            total_amount=0,
+            status='Completed',
+            created_at=created_at,
+            updated_at=created_at
+        )
+        orders.append(order)
+
+    # 3 đơn hàng trong 5 năm gần nhất (Completed)
+    for i in range(3):
+        created_at = timezone.now() - timedelta(days=365 * (i + 1))
+        order = Order(
+            user=users[0],
+            total_amount=0,
+            status='Completed',
+            created_at=created_at,
+            updated_at=created_at
+        )
+        orders.append(order)
+
+    # 2 đơn hàng với trạng thái Pending
+    for i in range(2):
+        created_at = timezone.now() - timedelta(days=i)
+        order = Order(
+            user=users[0],
+            total_amount=0,
+            status='Pending',
+            created_at=created_at,
+            updated_at=created_at
+        )
+        orders.append(order)
+
+    Order.objects.bulk_create(orders)
+    print("Added Orders")
+
+    # Tạo chi tiết đơn hàng (OrderDetail)
+    order_details = []
+    for order in Order.objects.all():
+        # Mỗi đơn hàng có 1-3 sách
+        num_books = random.randint(1, 3)
+        selected_books = random.sample(books, num_books)
+        total = 0
+        for book in selected_books:
+            quantity = random.randint(1, 5)
+            price = book.price * quantity
+            total += price
+            order_details.append(OrderDetail(
+                order=order,
+                book=book,
+                quantity=quantity,
+                price=price
+            ))
+        # Cập nhật total_amount cho Order
+        order.total_amount = total
+        order.save()
+
+    OrderDetail.objects.bulk_create(order_details)
+    print("Added Order Details")
 
     
 
