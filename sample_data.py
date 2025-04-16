@@ -30,6 +30,7 @@ def populate_sample_data():
     users = [
         User(username='customer1', password='pass123', full_name='Nguyen Van A', role='customer', address='123 Hanoi', email='customer1@example.com', phone='0123456789', status='active'),
         User(username='staff1', password='pass123', full_name='Tran Thi B', role='staff', address='456 HCM', email='staff1@example.com', phone='0987654321', status='active'),
+        User(username='manager1', password='pass123', full_name='Đinh Phúc Thành', role='manager', address='154 ADL', email='manager@example.com', phone='0123456789', status='active')
     ]
     User.objects.bulk_create(users)
     print("Added Users")
@@ -355,7 +356,220 @@ def populate_sample_data():
 
     OrderDetail.objects.bulk_create(order_details)
     print("Added Order Details")
-
+    
+    # Thêm Order và OrderDetail phù hợp với mô hình mới
+    users = list(User.objects.all())  # Lấy danh sách người dùng
+    books = list(Book.objects.filter(status='available'))  # Lấy danh sách sách có sẵn
+    
+    # Tạo địa chỉ mẫu
+    sample_addresses = [
+        "123 Nguyễn Văn Linh, Quận 7, TP.HCM",
+        "45 Lê Lợi, Quận 1, TP.HCM",
+        "67 Trần Hưng Đạo, Quận 5, TP.HCM",
+        "89 Phan Đình Phùng, Ba Đình, Hà Nội",
+        "34 Ngô Quyền, Hai Bà Trưng, Hà Nội",
+        "56 Lê Duẩn, Đà Nẵng",
+        "78 Hùng Vương, Huế",
+        "90 Trần Phú, Nha Trang",
+        "12 Nguyễn Huệ, Cần Thơ"
+    ]
+    
+    # Tạo 15 đơn hàng ban đầu
+    orders = []
+    
+    # 5 đơn hàng "Completed" trong 7 ngày gần nhất
+    for i in range(5):
+        created_at = timezone.now() - timedelta(days=i)
+        order = Order(
+            user=random.choice(users),
+            address=random.choice(sample_addresses),
+            total_amount=0,  # Sẽ cập nhật sau
+            status='Completed',
+            created_at=created_at,
+            updated_at=created_at + timedelta(hours=random.randint(2, 48))
+        )
+        orders.append(order)
+    
+    # 5 đơn hàng "Confirmed" trong 12 tháng gần nhất
+    for i in range(5):
+        created_at = timezone.now() - timedelta(days=30 * (i + 1))
+        order = Order(
+            user=random.choice(users),
+            address=random.choice(sample_addresses),
+            total_amount=0,
+            status='Confirmed',
+            created_at=created_at,
+            updated_at=created_at + timedelta(hours=random.randint(1, 24))
+        )
+        orders.append(order)
+    
+    # 3 đơn hàng "Cancelled" trong 5 tháng gần nhất
+    for i in range(3):
+        created_at = timezone.now() - timedelta(days=30 * (i + 1))
+        order = Order(
+            user=random.choice(users),
+            address=random.choice(sample_addresses),
+            total_amount=0,
+            status='Cancelled',
+            created_at=created_at,
+            updated_at=created_at + timedelta(days=random.randint(1, 3))
+        )
+        orders.append(order)
+    
+    # 2 đơn hàng với trạng thái "Pending"
+    for i in range(2):
+        created_at = timezone.now() - timedelta(days=i)
+        order = Order(
+            user=random.choice(users),
+            address=random.choice(sample_addresses),
+            total_amount=0,
+            status='Pending',
+            created_at=created_at,
+            updated_at=created_at
+        )
+        orders.append(order)
+    
+    Order.objects.bulk_create(orders)
+    print(f"Added {len(orders)} Orders")
+    
+    # Tạo chi tiết đơn hàng (OrderDetail)
+    order_details = []
+    orders = Order.objects.all()  # Lấy tất cả đơn hàng đã lưu từ DB
+    
+    for order in orders:
+        # Mỗi đơn hàng có 1-5 sách
+        num_books = random.randint(1, 5)
+        num_books = min(num_books, len(books))  # Đảm bảo không vượt quá số sách có sẵn
+        
+        selected_books = random.sample(books, num_books)
+        total = 0
+        
+        for book in selected_books:
+            quantity = random.randint(1, 3)
+            price = book.price * quantity
+            total += price
+            
+            order_details.append(OrderDetail(
+                order=order,
+                book=book,
+                quantity=quantity,
+                price=price
+            ))
+        
+        # Cập nhật total_amount cho Order
+        order.total_amount = total
+        order.save()
+    
+    OrderDetail.objects.bulk_create(order_details)
+    print(f"Added {len(order_details)} Order Details")
+    
+    # Tạo dữ liệu StockIn (nhập kho)
+    stock_ins = []
+    for book in books:
+        # Mỗi sách có 1-3 lần nhập kho
+        for _ in range(random.randint(1, 3)):
+            date = timezone.now() - timedelta(days=random.randint(1, 365))
+            quantity = random.randint(5, 50)
+            
+            note = random.choice([
+                f"Nhập từ NXB {book.author}",
+                "Nhập hàng bổ sung",
+                "Tái bản lần 2",
+                "Nhập từ đối tác phân phối",
+                "Bổ sung kho",
+                None
+            ])
+            
+            stock_ins.append(StockIn(
+                book=book,
+                quantity=quantity,
+                date=date,
+                note=note
+            ))
+    
+    StockIn.objects.bulk_create(stock_ins)
+    print(f"Added {len(stock_ins)} Stock In Records")
+    
+    # Tạo dữ liệu StockOut (xuất kho theo đơn hàng)
+    stock_outs = []
+    completed_orders = Order.objects.filter(status__in=['Completed', 'Confirmed'])
+    
+    for order in completed_orders:
+        order_details = OrderDetail.objects.filter(order=order)
+        
+        for detail in order_details:
+            stock_outs.append(StockOut(
+                order=order,
+                book=detail.book,
+                quantity=detail.quantity,
+                date=order.updated_at,
+                note=f"Xuất cho đơn hàng #{order.id}"
+            ))
+    
+    StockOut.objects.bulk_create(stock_outs)
+    print(f"Added {len(stock_outs)} Stock Out Records")
+    
+    # Thêm một số đơn đặt hàng lớn (high-value orders)
+    high_value_orders = []
+    for i in range(3):
+        created_at = timezone.now() - timedelta(days=random.randint(1, 90))
+        order = Order(
+            user=random.choice(users),
+            address=random.choice(sample_addresses),
+            total_amount=0,
+            status=random.choice(['Completed', 'Confirmed']),
+            created_at=created_at,
+            updated_at=created_at + timedelta(days=random.randint(1, 5))
+        )
+        high_value_orders.append(order)
+    
+    Order.objects.bulk_create(high_value_orders)
+    print(f"Added {len(high_value_orders)} High-value Orders")
+    
+    # Chi tiết cho đơn hàng giá trị cao
+    high_value_details = []
+    high_value_stock_outs = []
+    
+    for order in high_value_orders:
+        # 6-10 sản phẩm cho đơn hàng giá trị cao
+        num_books = random.randint(6, 10)
+        num_books = min(num_books, len(books))
+        
+        selected_books = random.sample(books, num_books)
+        total = 0
+        
+        for book in selected_books:
+            quantity = random.randint(3, 10)  # Số lượng lớn hơn
+            price = book.price * quantity
+            total += price
+            
+            detail = OrderDetail(
+                order=order,
+                book=book,
+                quantity=quantity,
+                price=price
+            )
+            high_value_details.append(detail)
+            
+            # Tạo StockOut tương ứng
+            if order.status in ['Completed', 'Confirmed']:
+                high_value_stock_outs.append(StockOut(
+                    order=order,
+                    book=book,
+                    quantity=quantity,
+                    date=order.updated_at,
+                    note=f"Xuất cho đơn hàng giá trị cao #{order.id}"
+                ))
+        
+        # Cập nhật total_amount
+        order.total_amount = total
+        order.save()
+    
+    OrderDetail.objects.bulk_create(high_value_details)
+    StockOut.objects.bulk_create(high_value_stock_outs)
+    
+    print(f"Added {len(high_value_details)} High-value Order Details")
+    print(f"Added {len(high_value_stock_outs)} Stock Out Records for high-value orders")
     
 
 if __name__ == '__main__':
