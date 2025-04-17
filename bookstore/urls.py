@@ -19,4 +19,5 @@ urlpatterns = [
     path('chart/sales/best/', report_views.chart_top_5_best_sellers, name='chart_best_seller'),
     path('chart/sales/worst/', report_views.chart_top_5_worst_sellers, name='chart_worst_seller'),
     path('chart/inventory/', report_views.chart_inventory, name='chart_inventory'),
+
 ]
