@@ -11,7 +11,6 @@ from ...models import Book, Category
   Xóa sách.
   Xem danh sách sách.
 """
-
 # Xem danh sách sách
 @admin.register(Book)
 def book_list(request):
