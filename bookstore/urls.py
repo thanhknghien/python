@@ -10,7 +10,12 @@ urlpatterns = [
     path('', home.home, name='home'),
     path('books/', home.books, name='books'),
     path('profile/', profile.profile, name = 'profile'),
+    path('cart/', profile.cart, name = 'cart'),
+
+    path('api/create_order/', profile.create_order, name = 'create-order'),
     path('api/view_order/', profile.view_order, name= 'view-order'),
+    path('api/search_order/', profile.search_order, name= 'search-order'),
+    path('api/get_book/', profile.get_book, name = 'get-books'),
 
     path('manager/report/revenue/', report_views.revenue_report_view, name='revenue_report'),
     path('manager/report/inventory/', report_views.inventory_report_view, name='inventory_report'),
