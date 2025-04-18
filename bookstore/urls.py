@@ -3,10 +3,14 @@ from django.urls import path
 
 from bookstore.views.manager import report_views
 from .views.customer import home
+from .views.customer import profile
+
 
 urlpatterns = [
     path('', home.home, name='home'),
     path('books/', home.books, name='books'),
+    path('profile/', profile.profile, name = 'profile'),
+    path('api/view_order/', profile.view_order, name= 'view-order'),
 
     path('manager/report/revenue/', report_views.revenue_report_view, name='revenue_report'),
     path('manager/report/inventory/', report_views.inventory_report_view, name='inventory_report'),
