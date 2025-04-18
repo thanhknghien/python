@@ -90,3 +90,13 @@ class StockOut(models.Model):
 
     def __str__(self):
         return f"StockOut {self.book.title} - {self.quantity}"
+
+class Report(models.Model):
+    class Meta:
+        managed = False
+        verbose_name = 'Báo cáo'
+        verbose_name_plural = 'Báo cáo'
+        
+    def __str__(self):
+        return 'Báo cáo'
+    

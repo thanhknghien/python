@@ -8,6 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from io import BytesIO
 import datetime
+from django.contrib.admin.views.decorators import staff_member_required
 
 def chart_revenue_by_day(request):
     try:
@@ -138,6 +139,7 @@ def generate_chart(labels, values, title, xlabel, ylabel):
 
 
 # --- Giao diện báo cáo ---
+@staff_member_required
 def revenue_report_view(request):
     return render(request, 'manager/report/revenue_report.html')
 
