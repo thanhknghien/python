@@ -37,7 +37,7 @@ class Book(models.Model):
     price = models.FloatField()
     stock = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    imagePath = models.ImageField(upload_to='book_images', null=True, blank=True)
+    imagePath = models.ImageField(upload_to='book_images', null=True, blank=True, default='book_images/default.png')
     status = models.CharField(max_length=20, choices=[
         ('available', 'Available'),
         ('unavailable', 'Unavailable')
@@ -91,12 +91,20 @@ class StockOut(models.Model):
     def __str__(self):
         return f"StockOut {self.book.title} - {self.quantity}"
 
-class Report(models.Model):
+class Report_Revenue(models.Model):
     class Meta:
         managed = False
-        verbose_name = 'Báo cáo'
-        verbose_name_plural = 'Báo cáo'
+        verbose_name = 'Report Revenue'
+        verbose_name_plural = 'Report Revenue'
         
     def __str__(self):
-        return 'Báo cáo'
-    
+        return 'Report Revenue'
+
+class Report_Inventory(models.Model):
+    class Meta:
+        managed = False
+        verbose_name = 'Report Inventory'
+        verbose_name_plural = 'Report Inventory'
+        
+    def __str__(self):
+        return 'Report Inventory'
