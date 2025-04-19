@@ -3,13 +3,14 @@ from .models import User, Book, Category, Order, OrderDetail, StockIn, StockOut,
 from .views.admin.book_admin import UserAdmin
 from django.urls import path
 from .views.manager.report_views import revenue_report_view
+from .views.staff.stock_in import StockInAdmin
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Book)
 admin.site.register(Category)
 admin.site.register(Order)
 admin.site.register(OrderDetail)
-admin.site.register(StockIn)
+admin.site.register(StockIn, StockInAdmin)
 admin.site.register(StockOut)
 
 

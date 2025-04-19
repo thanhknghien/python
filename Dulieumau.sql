@@ -1,4 +1,4 @@
-INSERT INTO category (name) VALUES 
+INSERT INTO bookstore_category (name) VALUES 
 ('Văn học'),
 ('Khoa học'),
 ('Tâm lý'),
