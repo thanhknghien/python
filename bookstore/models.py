@@ -80,6 +80,7 @@ class OrderDetail(models.Model):
         return f"{self.book.title} (x{self.quantity})"
 
 class StockIn(models.Model):
+    price = models.FloatField(default=0)
     book = models.ForeignKey(Book, on_delete=models.RESTRICT)
     quantity = models.PositiveIntegerField()
     date = models.DateTimeField(auto_now_add=True)
