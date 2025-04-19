@@ -58,7 +58,10 @@ class Order(models.Model):
     ], default='Pending')
     total_amount = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)\
+    
+    def get_total(self):
+        return self.total_amount
 
     def __str__(self):
         return f"Order {self.id} - {self.user.username}"

@@ -26,16 +26,7 @@ body {
   }
   
   .header-left .logo {
-    width: 150px;
-  }
-  
-  .header-center .search-bar {
-    width: 100%;
-    padding: 10px 15px;
-    border-radius: 25px;
-    border: none;
-    outline: none;
-    font-size: 16px;
+    width: 100px;
   }
   
   .header-right{
@@ -48,6 +39,7 @@ body {
     font-size: 16px;
     color: #fff;
     transition: color 0.3s ease;
+    font-size: 18px;
   }
   
   .header-right .icon:hover {
