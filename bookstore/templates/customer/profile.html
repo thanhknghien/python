@@ -10,30 +10,29 @@
 <body>
   <header class="header">
     <div class="header-left">
-        <img src="" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
+        <img src="/static/img/logo.svg" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
     </div>
     
     <div class="header-right">
-        <a href="#" class="icon" onclick="window.location.href='cart.html';">Giỏ hàng</a>
-        <a href="#" class="icon" onclick="location.reload()">Tài khoản</a>
-        <a id="logOut" class="icon" style="display: none; cursor: pointer;">Đăng xuất</a>
-        <a id="logIn" class="icon" style="display: none; cursor: pointer;">Đăng nhập</a>
+        <a href="/cart" class="icon">Giỏ hàng</a>
+        <a href="#" class="icon" >Tài khoản</a>
+        <a id="logOut" class="icon" onclick="onLogout()" style="cursor: pointer;">Đăng xuất</a>
     </div>
   </header>
 
   <div class="wrapper">
     <div class="nav-bar">
       <div class="logo-user">
-        <img id="user-avatar" src="" alt="logo">
+        <img id="user-avatar" src="/static/img/account.svg" alt="logo">
         <p>Xin chào!<p id="username"></p></p>
       </div>
       <div class="menu" id="menu">
         <div class="menu-li" id="profile-tab">
-          <img src="" alt="icon-user">
+          <img src="/static/img/account.svg" alt="icon-user">
           Tài khoản của tôi
         </div>
         <div class="menu-li" id="order-history-tab">
-          <img src="" alt="icon-cart">
+          <img src="/static/img/danhmuc.jpg" alt="icon-cart">
           Đơn mua
         </div>
       </div>
@@ -50,6 +49,7 @@
           <div class="user-info">
             <p><strong>Họ và tên:</strong> <span id="user-fullname"></span></p>
             <p><strong>Số điện thoại:</strong> <span id="user-sdt"></span></p>
+            <p><strong>Địa chỉ:</strong> <span id="user-address"></span></p>
             <p><strong>Trạng thái:</strong> <span id="user-status"></span></p>
             <button id="edit-profile-btn">Sửa thông tin</button>
           </div>
@@ -86,24 +86,23 @@
               <label for="search-status">Trạng thái:</label>
               <select id="search-status">
                 <option value="">--Tất cả--</option>
-                <option value="Chưa thanh toán">Chưa thanh toán</option>
-                <option value="Đang giao">Đang xử lý</option>
-                <option value="Đã thanh toán">Đã thanh toán</option>
+                <option value="Pending">Chưa thanh toán</option>
+                <option value="Confirmed">Đã xác nhận</option>
+                <option value="Completed">Đã thanh toán</option>
+                <option value="Cancelled">Đã hủy</option>
               </select>
             </div>
             
-            <button id="search-btn">Tìm kiếm</button>
-            <button id="reset-btn">Clear</button>
+            <button id="search-btn" >Tìm kiếm</button>
+            <button id="reset-btn" onclick=reset()>Clear</button>
           </div>
-          
           
           <ul id="order-list">
             <table id="invoice-table">
               <thead>
                 <th>ID Hóa Đơn</th>
                 <th>Tên Khách Hàng</th>
-                <th>Ngày mua</th>
-                <th>Số lượng</th>
+                <th>Ngày đặt</th>
                 <th>Tổng tiền</th>
                 <th>Địa chỉ</th>
                 <th>Trạng thái</th>
@@ -121,7 +120,6 @@
               <table id="detail-oder">
                 <thead>
                   <tr>
-                    <th>ID Sản Phẩm</th>
                     <th>Tên Sản Phẩm</th>
                     <th>Số Lượng</th>
                     <th>Đơn Giá</th>

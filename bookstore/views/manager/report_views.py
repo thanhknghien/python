@@ -139,7 +139,7 @@ def generate_chart(labels, values, title, xlabel, ylabel):
 
 
 # --- Giao diện báo cáo ---
-@staff_member_required
+
 def revenue_report_view(request):
     return render(request, 'manager/report/revenue_report.html')
 
