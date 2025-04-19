@@ -5,7 +5,6 @@ from bookstore.views.manager import report_views
 from .views.customer import home
 from .views.customer import profile
 
-
 urlpatterns = [
     path('', home.home, name='home'),
     path('books/', home.books, name='books'),
