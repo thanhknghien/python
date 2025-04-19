@@ -735,7 +735,6 @@ div.breadcrumbs a:focus, div.breadcrumbs a:hover {
 .viewlink, .inlineviewlink {
     padding-left: 16px;
     background: url(../img/icon-viewlink.svg) 0 1px no-repeat;
-    visibility: hidden;
 }
 
 .hidelink {
@@ -746,19 +745,16 @@ div.breadcrumbs a:focus, div.breadcrumbs a:hover {
 .addlink {
     padding-left: 16px;
     background: url(../img/icon-addlink.svg) 0 1px no-repeat;
-    visibility: hidden;
 }
 
 .changelink, .inlinechangelink {
     padding-left: 16px;
-    background: url(../img/icon-changelink.svg) 0 1px no-repeat;
-    visibility: hidden;
+    background: url(../img/icon-changelink.svg) 0 1px no-repeat
 }
 
 .deletelink {
     padding-left: 16px;
     background: url(../img/icon-deletelink.svg) 0 1px no-repeat;
-     visibility: hidden;
 }
 
 a.deletelink:link, a.deletelink:visited {

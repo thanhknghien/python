@@ -2,18 +2,8 @@ from django.contrib import admin
 from .models import User, Book, Category, Order, StockIn, StockOut, Report_Inventory, Report_Revenue
 from .views.admin.user_admin import UserAdmin
 from .views.admin.book_admin import BookAdmin
-from django.urls import path
-<<<<<<< HEAD
-from .views.manager.report_views import revenue_report_view
 from .views.staff.stock_in import StockInAdmin
-
-admin.site.register(User, UserAdmin)
-admin.site.register(Book)
-admin.site.register(Category)
-admin.site.register(Order)
-admin.site.register(OrderDetail)
-admin.site.register(StockIn, StockInAdmin)
-=======
+from django.urls import path
 from .views.manager.report_views import revenue_report_view, inventory_report_view
 from .views.admin.category_admin import CategoryAdmin
 from .views.staff.order_status import OrderAdmin
@@ -22,8 +12,7 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(StockIn)
->>>>>>> 89184e8a3839397da999e8769bcd3ba20eb95b4f
+admin.site.register(StockIn, StockInAdmin)
 admin.site.register(StockOut)
 
 
