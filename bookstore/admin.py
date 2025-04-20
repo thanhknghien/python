@@ -3,6 +3,7 @@ from .models import User, Book, Category, Order, StockIn, StockOut, Report_Inven
 from .views.admin.user_admin import UserAdmin
 from .views.admin.book_admin import BookAdmin
 from .views.staff.stock_in import StockInAdmin
+from .views.staff.stock_out import StockOutAdmin
 from django.urls import path
 from .views.manager.report_views import revenue_report_view, inventory_report_view
 from .views.admin.category_admin import CategoryAdmin
@@ -13,7 +14,7 @@ admin.site.register(Book, BookAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(StockIn, StockInAdmin)
-admin.site.register(StockOut)
+admin.site.register(StockOut,StockOutAdmin)
 
 
 class ReportAdmin1(admin.ModelAdmin):
