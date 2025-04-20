@@ -1,16 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Giỏ Hàng</title>
-  <link rel="stylesheet" href="/static/css/customer/cart.css">
+  <link rel="stylesheet" href="{% static 'css/customer/cart.css' %}">
 </head>
 <body>
   
   <header class="header">
     <div class="header-left">
-        <img src="/static/img/logo.svg" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
+        <img src="{% static 'img/logo.svg' %}" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
     </div>
     
     <div class="header-right">
@@ -109,6 +110,6 @@
     </div>
 </footer>
   
-<script src="/static/js/customer/cart.js"></script>
+<script src="{% static "js/customer/cart.js" %}"></script>
 </body>
 </html>
