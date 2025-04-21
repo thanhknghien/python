@@ -5,7 +5,6 @@ from .views.admin.book_admin import BookAdmin
 from .views.staff.stock_in import StockInAdmin
 from .views.staff.stock_out import StockOutAdmin
 from django.urls import path
-from .views.manager.report_views import revenue_report_view, inventory_report_view
 from .views.admin.category_admin import CategoryAdmin
 from .views.staff.order_status import OrderAdmin
 
@@ -21,7 +20,7 @@ class ReportAdmin1(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('', revenue_report_view, name='admin_revenue_report'),
+            #path('', revenue_report_view, name='admin_revenue_report'),
         ]
         return custom_urls + urls
 
@@ -34,14 +33,14 @@ class ReportAdmin1(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def changelist_view(self, request, extra_context=None):
-        return revenue_report_view(request)
+    #def changelist_view(self, request, extra_context=None):
+        #return revenue_report_view(request)
 
 class ReportAdmin2(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('', inventory_report_view, name='admin_inventoryreport'),
+            #path('', inventory_report_view, name='admin_inventoryreport'),
         ]
         return custom_urls + urls
 
@@ -54,8 +53,8 @@ class ReportAdmin2(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def changelist_view(self, request, extra_context=None):
-        return inventory_report_view(request)
+    #def changelist_view(self, request, extra_context=None):
+        #return inventory_report_view(request)
 
 admin.site.register(Report_Revenue, ReportAdmin1)
 admin.site.register(Report_Inventory, ReportAdmin2)

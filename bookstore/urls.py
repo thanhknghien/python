@@ -16,16 +16,11 @@ urlpatterns = [
     path('api/search_order/', profile.search_order, name= 'search-order'),
     path('api/get_book/', profile.get_book, name = 'get-books'),
 
-    path('manager/report/revenue/', report_views.revenue_report_view, name='revenue_report'),
-    path('manager/report/inventory/', report_views.inventory_report_view, name='inventory_report'),
+    path('manager/', report_views.home, name='revenue_report'),
+    path('api/revenue/day/', report_views.revenue_by_range),
+    path('api/revenue/month/', report_views.revenue_by_month),
+    path('api/revenue/year/', report_views.revenue_by_year),
+    path('api/statistics/revenue/', report_views.revenue_statistics),
 
-    # Biểu đồ
-    path('chart/revenue/day/', report_views.chart_revenue_by_day, name='chart_revenue_day'),
-    path('chart/revenue/month/', report_views.chart_revenue_by_month, name='chart_revenue_month'),
-    path('chart/revenue/year/', report_views.chart_revenue_by_year, name='chart_revenue_year'),
-    path('chart/revenue/top/', report_views.chart_top_5_revenue_products, name='chart_top_revenue'),
-    path('chart/sales/best/', report_views.chart_top_5_best_sellers, name='chart_best_seller'),
-    path('chart/sales/worst/', report_views.chart_top_5_worst_sellers, name='chart_worst_seller'),
-    path('chart/inventory/', report_views.chart_inventory, name='chart_inventory'),
 
 ]
