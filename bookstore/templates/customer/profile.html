@@ -1,16 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thông tin Người dùng</title>
-  <link rel="stylesheet" href="/static/css/customer/profile.css">
+  <link rel="stylesheet" href="{% static 'css/customer/profile.css' %}">
   
 </head>
 <body>
   <header class="header">
     <div class="header-left">
-        <img src="/static/img/logo.svg" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
+        <img src="{% static 'img/logo.svg' %}" alt="" class="logo" style="cursor: pointer;"  onclick="window.location.href='/';">
     </div>
     
     <div class="header-right">
@@ -23,7 +24,7 @@
   <div class="wrapper">
     <div class="nav-bar">
       <div class="logo-user">
-        <img id="user-avatar" src="/static/img/account.svg" alt="logo">
+        <img id="user-avatar" src="{% static 'img/account.svg' %}" alt="logo">
         <p>Xin chào!<p id="username"></p></p>
       </div>
       <div class="menu" id="menu">
@@ -32,7 +33,7 @@
           Tài khoản của tôi
         </div>
         <div class="menu-li" id="order-history-tab">
-          <img src="/static/img/danhmuc.jpg" alt="icon-cart">
+          <img src="{% static 'img/danhmuc.jpg' %}" alt="icon-cart">
           Đơn mua
         </div>
       </div>
@@ -166,6 +167,6 @@
     </div>
   </footer>
 
-  <script src="/static/js/customer/profile.js" ></script>
+  <script src="{% static 'js/customer/profile.js' %}" ></script>
 </body>
 </html>
