@@ -9,5 +9,6 @@ class OrderDetailInline(admin.TabularInline):  # hoặc StackedInline
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'status', 'total_amount', 'created_at')
+    list_filter =('status', 'created_at', 'user')
     inlines = [OrderDetailInline]
 

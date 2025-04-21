@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thống kê doanh thu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      min-width: 90px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      flex-grow: 1;
+      max-width: 200px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    canvas {
+      margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>📊 Thống kê doanh thu</h2>
+
+    <div class="form-group">
+      <label for="type">Loại thống kê:</label>
+      <select id="type">
+        <option value="day">Theo ngày</option>
+        <option value="month">Theo tháng</option>
+        <option value="year">Theo năm</option>
+      </select>
+    </div>
+
+    <div id="date-range" class="form-group">
+      <label>Từ ngày:</label>
+      <input type="date" id="start-date">
+      <label>Đến ngày:</label>
+      <input type="date" id="end-date">
+    </div>
+
+    <div id="month-range" class="form-group" style="display: none;">
+      <label>Từ tháng:</label>
+      <input type="month" id="start-month">
+      <label>Đến tháng:</label>
+      <input type="month" id="end-month">
+    </div>
+
+    <div id="year-range" class="form-group" style="display: none;">
+      <label>Từ năm:</label>
+      <input type="number" id="start-year" min="2000" max="2100" value="2020">
+      <label>Đến năm:</label>
+      <input type="number" id="end-year" min="2000" max="2100" value="2024">
+    </div>
+
+    <button id="fetchBtn">Xem biểu đồ</button>
+
+    <canvas id="revenueChart" width="800" height="400"></canvas>
+  </div>
+
+  <script>
+    const typeSelect = document.getElementById("type");
+    const dateRange = document.getElementById("date-range");
+    const monthRange = document.getElementById("month-range");
+    const yearRange = document.getElementById("year-range");
+
+    typeSelect.addEventListener("change", function () {
+      const type = this.value;
+      dateRange.style.display = type === "day" ? "flex" : "none";
+      monthRange.style.display = type === "month" ? "flex" : "none";
+      yearRange.style.display = type === "year" ? "flex" : "none";
+    });
+
+    let chart = null;
+
+    document.getElementById("fetchBtn").addEventListener("click", async () => {
+      const type = typeSelect.value;
+      let data = { type };
+
+      if (type === "day") {
+        const start = document.getElementById("start-date").value;
+        const end = document.getElementById("end-date").value;
+        if (!start || !end) return alert("Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc.");
+        const diff = (new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24);
+        if (diff > 30) return alert("Khoảng thời gian không được vượt quá 31 ngày.");
+        data.start_date = start;
+        data.end_date = end;
+      } else if (type === "month") {
+        const start = document.getElementById("start-month").value;
+        const end = document.getElementById("end-month").value;
+        if (!start || !end) return alert("Vui lòng chọn khoảng tháng.");
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const diffMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + endDate.getMonth() - startDate.getMonth();
+        if (diffMonths > 11) return alert("Chỉ được chọn tối đa 12 tháng.");
+        data.start_month = start;
+        data.end_month = end;
+      } else if (type === "year") {
+        const start = parseInt(document.getElementById("start-year").value);
+        const end = parseInt(document.getElementById("end-year").value);
+        if (!start || !end || start > end) return alert("Vui lòng chọn năm hợp lệ.");
+        if (end - start > 5) return alert("Chỉ được chọn tối đa 5 năm.");
+        data.start_year = start;
+        data.end_year = end;
+      }
+
+      try {
+        const res = await fetch("/api/statistics/revenue/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await res.json();
+        if (chart) chart.destroy();
+        chart = new Chart(document.getElementById("revenueChart"), {
+          type: "bar",
+          data: {
+            labels: result.labels,
+            datasets: [{
+              label: "Doanh thu",
+              data: result.revenues,
+              backgroundColor: "#4caf50",
+              borderRadius: 5,
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: value => value.toLocaleString("vi-VN") + " đ"
+                }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return context.dataset.label + ": " + context.parsed.y.toLocaleString("vi-VN") + " đ";
+                  }
+                }
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Lỗi khi tải dữ liệu.");
+      }
+    });
+  </script>
+</body>
+</html>
