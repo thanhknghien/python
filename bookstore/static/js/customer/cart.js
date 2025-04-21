@@ -1,5 +1,41 @@
-
-
+const testCart = {
+    "user_id": 1,
+    "address": "123 đường ABC",
+    "cart": [
+        {
+            "book_id": 5,
+            "quantity": 2,
+            "unitPrice": 50000
+        },
+        {
+            "book_id": 2,
+            "quantity": 1,
+            "unitPrice": 75000
+        },
+        {
+            "book_id": 3,
+            "quantity": 1,
+            "unitPrice": 75000
+        },
+        {
+            "book_id": 4,
+            "quantity": 1,
+            "unitPrice": 75000
+        }
+    ]
+}
+const testUser = {
+    id: "1",
+    username: "nguyenvana",
+    password: "12345678",
+    role: "customer",
+    full_name: "Nguyễn Văn A",
+    address: "123 Đường ABC, Quận 1, TP.HCM",
+    email: "nguyenvana@example.com",
+    phone: "0901234567",
+    status: "active"
+};
+localStorage.setItem('cart', JSON.stringify(testCart))
 const cart = JSON.parse(localStorage.getItem('cart')) || ''
 const user = JSON.parse(localStorage.getItem('user')) || ''
 
@@ -33,7 +69,7 @@ function formatPrice(price) {
 function renderCart() {
     const tbody = document.getElementById('cart-items');
     tbody.innerHTML = ''; // Xóa nội dung cũ
-    cart.cart.forEach(item => {
+    testCart.cart.forEach(item => {
         books.forEach(book => {
             if (item.book_id == book.id) {
                 const row = document.createElement('tr');
@@ -136,7 +172,7 @@ function openCheckoutModal() {
     }
     const modal = document.getElementById('checkout-modal');
     const addressInput = document.getElementById('address');
-    addressInput.value = cart.address;
+    addressInput.value = testCart.address;
     modal.style.display = 'flex';
 }
 
@@ -208,7 +244,7 @@ async function placeOrder() {
 
     // Tạo dữ liệu gửi đến API
     const apiData = {
-        user_id: cart.user_id,
+        user_id: testCart.user_id,
         address: address,
         cart: []
     };
