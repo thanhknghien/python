@@ -1,17 +1,205 @@
 /* static/css/customer/home.css */
 .book-item {
-    margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.book-item img {
-    max-width: 100%;
-    height: auto;
+.card {
+  height: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+  padding: 10px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  /* Giới hạn tiêu đề 2 dòng */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+/* Đẩy các nút xuống dưới cùng */
+.card-body .btn-group {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-info,
+.btn-success {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.9rem;
 }
 
 #book-list {
-    margin-top: 20px;
+  margin-top: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .book-item {
+    margin-bottom: 20px;
+  }
+
+  .card-img-top {
+    height: 200px;
+  }
+
+  .card-body {
+    height: 220px;
+  }
 }
 
 #pagination {
-    margin-top: 20px;
+  margin-top: 20px;
 }
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+/* Điều chỉnh vị trí dropdown menu tài khoản */
+.nav-item.dropdown {
+  position: relative;
+}
+
+.nav-item.dropdown .dropdown-menu {
+  right: auto;
+  left: -145px; /* Điều chỉnh từ -50px thành -100px để dịch sang trái thêm */
+  min-width: 200px;
+}
+
+.header-right .icon {
+  padding: 10px 20px;
+  margin: 5px;
+}
+.popup {
+  display: none; /* Ẩn popup mặc định */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1000;
+  width: 500px;
+  height: auto;
+  max-width: 90%;
+
+}
+/* Overlay mờ phủ toàn bộ nền */
+
+
+.popup-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 25px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.3s ease;
+  position: relative;
+}
+/* Hiệu ứng animation */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+.popup-content .close:hover {
+  color: #000;
+}
+.danh-muc {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.danh-muc-item {
+    text-align: center;
+    width: 100px;
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.danh-muc-item:hover {
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+  }
+  
+  .danh-muc-item.active {
+    background-color: #e3f2fd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+.danh-muc-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.danh-muc-item p {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 25px;
+  margin-bottom: 15px;
+}
+
+  
